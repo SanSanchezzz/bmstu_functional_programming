@@ -1,0 +1,247 @@
+\chapter{Практическая часть}
+
+\section{Задание \No{}1}
+
+Написать предикат set-equal, который возвращает t, если два его множество-
+аргумента содержат одни и те же элементы, порядок которых не имеет значения.
+
+\begin{lstlisting}
+(defun set-equal (lst1 lst2)
+    (and (subsetp lst1 lst2) (subsetp lst2 lst1))
+\end{lstlisting}
+
+\section{Задание \No{}2}
+Напишите необходимые функции, которые обрабатывают таблицу из точечных пар:
+(страна. столица), и возвращают по стране - столицу, а по столице - страну.
+
+Создаём точеченые пары:
+
+\begin{lstlisting}
+(setq cities '(Berlin Paris Moscow London))
+(setq countries '(Germany France Russia England))
+
+(defun set_points (a b)
+  (cons a b)
+)
+
+(setq points (mapcar #'set_points countries cities))
+\end{lstlisting}
+
+Рекурсивный поиск:
+
+\begin{lstlisting}
+(defun found_country (city lst)
+  (cond ((null lst) nil)
+        ((eql city (cdr (car lst))) (caar lst))
+        (t (found_country city (cdr lst)))
+  )
+)
+
+(defun found_city (country lst)
+  (cond ((null lst) nil)
+        ((eql country (car (car lst))) (cdr (car lst)))
+        (t (found_city country (cdr lst)))
+  )
+)
+\end{lstlisting}
+
+Поиск с использование функционалов:
+
+\begin{lstlisting}
+(defun found_country_func (city lst)
+  (defun found (lst1 lst2)
+    (if (consp lst1)
+      (or (if (eql city (cdr lst1)) (car lst1) Nil)
+          (if (eql city (cdr lst2)) (car lst2) Nil) )
+      (or lst1 (if (eql city (cdr lst2)) (car lst2) Nil) )
+    )
+  )
+  (reduce #'found newPoints)
+)
+
+(defun found_city_func (country lst)
+  (defun found (lst1 lst2)
+    (if (consp lst1)
+      (or (if (eql country (car lst1)) (cdr lst1) Nil)
+          (if (eql country (car lst2)) (cdr lst2) Nil) )
+      (or lst1 (if (eql country (car lst2))(cdr lst2) Nil))
+    )
+  )
+  (reduce #'found newPoints)
+)
+\end{lstlisting}
+
+
+\section{Задание \No{}3}
+
+Напишите функцию, которая умножает на заданное число-аргумент все числа
+из заданного списка-аргумента, когда
+\begin{enumerate}
+\item все элементы списка --- числа,
+\item элементы списка -- любые объекты.
+\end{enumerate}
+
+С использованием рекурсии:
+
+\begin{lstlisting}
+(defun mul_num_rec (lst k)
+  (if lst
+    (cons (* (car lst) k) (mul_num_rec (cdr lst) k))
+  )
+)
+
+(defun mul_all_rec (lst k)
+  (if lst
+    (cons
+      (if (numberp (car lst)) (* (car lst) k) (car lst))
+      (mul_all_rec (cdr lst) k)
+    )
+  )
+)
+\end{lstlisting}
+
+С использованием функционалов:
+
+\begin{lstlisting}
+(defun mul_num (lst k)
+  (mapcar #'(lambda (x) (* x k)) lst)
+)
+
+(defun mul_all (lst k)
+  (mapcar #'(lambda (x) (if (numberp x) (* x k) x)) lst)
+)
+\end{lstlisting}
+
+\section{Задание \No{}4}
+
+Напишите функцию, которая уменьшает на 10 все числа из списка
+аргумента этой функции.
+
+С использованием рекурсии:
+\begin{lstlisting}
+(defun minus_ten_rec (lst)
+    (cond
+        ((null lst) Nil)
+        ('T (cons (- (car lst) 10) (minus_ten_car (cdr lst))))
+    )
+)
+\end{lstlisting}
+
+С использованием функционалов:
+\begin{lstlisting}
+(defun minus_ten_car (lst)
+    (mapcar #'(lambda (el) (- el 10)) lst)
+)
+\end{lstlisting}
+
+\section{Задание \No{}5}
+
+Написать функцию, которая возвращает первый аргумент списка -аргумента.
+который сам является непустым списком.
+
+С использованием рекурсии:
+\begin{lstlisting}
+(defun first_list_rec (lst)
+    (cond
+        ((null lst) Nil)
+        ((not (atom (car lst))) (car lst))
+        ('T (first_list_rec (cdr lst)))
+    )
+)
+\end{lstlisting}
+
+С использованием функционалов:
+\begin{lstlisting}
+(defun first_list_map (lst)
+    (reduce #'
+        (lambda (el1 el2)
+            (or
+                (and (not (atom el1)) el1)
+                (and (not (atom el2)) el2)
+            )
+        ) lst
+    )
+)
+\end{lstlisting}
+
+
+\section{Задание \No{}6}
+
+Написать функцию, которая выбирает из заданного списка только те числа,
+которые больше 1 и меньше 10.
+(Вариант: между двумя заданными границами.)
+
+С использованием рекурсии:
+
+\begin{lstlisting}
+(defun found_between_rec (a b lst)
+  (if lst
+    (append
+      (if (and (< a (car lst)) (< (car lst) b))
+      	(list (car lst)) Nil
+      )
+      (found_between_rec a b (cdr lst))
+    )
+  )
+)
+\end{lstlisting}
+
+С использованием функционалов:
+
+\begin{lstlisting}
+(defun found_between (a b lst)
+  (defun found (lst1 lst2)
+    (if (numberp lst1)
+      (append(if(and(< a lst1)(< lst1 b))(list lst1) Nil)
+              (if(and(< a lst2)(< lst2 b))(list lst2) Nil))
+      (append lst1
+              (if(and(< a lst2)(< lst2 b))(list lst2) Nil))
+    )
+  )
+  (reduce #'found lst)
+)
+\end{lstlisting}
+
+\section{Задание \No{}7}
+
+Написать функцию, вычисляющую декартово произведение двух своих списков-аргументов. ( Напомним, что А х В это множество всевозможных пар (a b), где а принадлежит А, принадлежит В.)
+
+С использованием рекурсии:
+
+\begin{lstlisting}
+(defun decart (el lst)
+    (cond
+        ((null lst) Nil)
+        ('T (cons (cons el (car lst)) (decart_one_element el (cdr lst))))
+    )
+)
+
+(defun decart_rec (lst1 lst2)
+    (cond
+        ((null lst1) Nil)
+        ('T (append (decart (car lst1) lst2) (decart_rec (cdr lst1) lst2)))
+    )
+)
+\end{lstlisting}
+
+С использованием функционалов:
+
+\begin{lstlisting}
+(defun decart_map (lst1 lst2)
+    (mapcan #'
+        (lambda (x)
+            (mapcar #'(lambda (y) (cons x y)) lst2)
+        ) lst1
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}8}
+
+Почему так реализовано reduce, в чем причина?
+
+\begin{lstlisting}
+(reduce #'+ ()) -> 0
+\end{lstlisting}
+
+Результатом функции будет значение по умолчанию (то есть 0), так как список, к которому применяется функция является пустым.
