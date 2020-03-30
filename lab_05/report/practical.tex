@@ -1,0 +1,127 @@
+\chapter{Практическая часть}
+
+\section{Задание \No{}1}
+
+Написать функцию, которая принимает целое число и возвращает первое
+четное число, не меньшее аргумента.
+
+\begin{lstlisting}
+(defun first_even_after (num)
+    (if (oddp num)
+        (+ num 1)
+        num
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}2}
+
+
+Написать функцию, которая принимает число и возвращает число
+того же знака, но с модулем на 1 больше модуля аргумента.
+
+\begin{lstlisting}
+(defun abs_plus_one (num)
+    (if (> num 0)
+        (+ num 1)
+        (- num 1)
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}3}
+
+Написать функцию, которая принимает два числа и возвращает
+список из этих чисел, расположенный по возрастанию.
+
+\begin{lstlisting}
+(defun sort_two_numbers (n1 n2)
+    (if (< n1 n2)
+        (list n1 n2)
+        (list n2 n1)
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}4}
+
+Написать функцию, которая принимает три числа и возвращает Т только
+тогда, когда первое число расположенно между вторым и третьим.
+
+\begin{lstlisting}
+(defun between_two_numbers (a b c)
+    (and (<= b a) (>= c a))
+)
+\end{lstlisting}
+
+\section{Задание \No{}5}
+
+Каков результат вычисления следующих выражений?
+
+\begin{lstlisting}
+(and 'fee 'fie 'foe)
+;;; Результат: FOE
+
+(or nil 'fie 'foe)
+;;; Результат: FIE
+
+(and (equal 'abc 'abc) 'yes)
+;;; Результат: YES
+
+(or 'fee 'fie 'foe)
+;;; Результат: FEE
+
+(and nil 'fie 'foe)
+;;; Результат: NIL
+
+(or (equal 'abc 'abc) 'yes)
+;;; Результат: T
+\end{lstlisting}
+
+\section{Задание \No{}6}
+
+Написать предикат, который принимает два числа-аргумента и возвращает
+Т, если первое число не меньше второго.
+
+\begin{lstlisting}
+(defun more_or_equal (num1 num2)
+    (>= num1 num2)
+)
+\end{lstlisting}
+
+\section{Задание \No{}7}
+
+Какой из следующих двух вариантов предиката ошибочен и почему?
+
+\begin{lstlisting}
+(defun pred1 (x)
+    (and (numberp x) (plusp x))
+)
+
+(defun pred2 (x)
+    (and (plusp x) (numberp x))
+)
+
+(pred1 'a) ;;; Nil
+(pred2 'a) ;;; Error
+\end{lstlisting}
+
+В варианте (pred2 'a) возникает ошибка при проверке аргумента на положительность. Необходимо проверять, является ли входной параметр числом.
+
+\section{Задание \No{}8}
+
+Решить задачу 4, используя для ее решения конструкции
+IF, COND, AND/OR.
+
+\begin{lstlisting}
+(defun between_two_numbers (num num1 num2)
+    (if (or
+            (and (< num num1) (> num num2))
+            (and (> num num1) (< num num2))
+        )
+        t
+        nil
+    )
+)
+\end{lstlisting}
+
