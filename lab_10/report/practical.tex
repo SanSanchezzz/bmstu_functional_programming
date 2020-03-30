@@ -1,0 +1,218 @@
+\chapter{Практическая часть}
+
+\section{Задание \No{}1}
+Пусть list-of-list список, состоящий из списков. Написать функцию, которая вычисляет сумму длин всех элементов list-of-list.
+Например для аргумента ((1 2) (3 4)) -> 4.
+
+\begin{lstlisting}
+(defun len_lists (lst)
+    (cond
+        ((null lst) 0)
+        (t (+ (length (car lst))
+              (len_lists (cdr lst))))
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}2}
+Написать рекурсивную версию (с именем reg-add) вычисления суммы чисел
+заданного списка.
+Например: (reg-add (2 4 6)) -> 12
+
+\begin{lstlisting}
+(defun reg-add (lst)
+    (cond
+        ((null lst) 0)
+        (t (+ (car lst) (reg-add (cdr lst))))
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}3}
+Написать рекурсивную версию с именем recnth функции nth.
+
+\begin{lstlisting}
+(defun recnth (n lst)
+    (cond
+        ((or (= 0 n)
+             (null lst)) (car lst))
+        (t (recnth (- n 1) (cdr lst)))
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}4}
+Написать рекурсивную функцию alloddr, которая возвращает t когда все
+элементы списка нечетные.
+
+\begin{lstlisting}
+(defun alloddr (lst)
+    (cond
+        ((null lst) t)
+        ((eql (mod (car lst) 2) 0) nil)
+        (t (alloddr (cdr lst)))
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}5}
+
+Написать рекурсивную функцию, относящуюся к хвостовой рекурсии с одним тестом завершения, которая возвращает последний элемент списка - аргументы.
+
+\begin{lstlisting}
+(defun latest (lst)
+    (cond
+        ((null lst) nil)
+        ((eql (length lst) 1) (car lst))
+        (t (latest (cdr lst)))
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}6}
+
+Написать рекурсивную функцию, относящуюся к дополняемой рекурсии с
+одним тестом завершения, которая вычисляет сумму всех чисел от 0 до n-ого аргумента функции.
+Вариант:
+\begin{enumerate}
+    \item  от п-аргумента функции до последнего >= 0,
+    \item  от п-аргумента функции до т-аргумента с шагом d.
+\end{enumerate}
+
+Дополняющая рекурсия, считающая сумму всех чисел от 0 до n-го аргумента.
+\begin{lstlisting}
+(defun sum_first(lst n)
+  (cond
+    ((= n (length lst)) (car lst))
+    (t (+ (car lst) (sum_first (cdr lst) n)))
+  )
+)
+
+(defun sum_first_n(lst n)
+  (sum_first lst (+ 1 (- (length lst) n)))
+)
+\end{lstlisting}
+
+Дополняющая рекурсия, считающая сумму всех чисел от n-го аргумента до конца.
+\begin{lstlisting}
+(defun sum_last(lst n)
+  (cond
+    ((= 1 (length lst)) (car lst))
+    ((>= n (length lst)) (+ (car lst)
+    	(sum_last (cdr lst) n))
+    )
+    (t (sum_last (cdr lst) n))
+  )
+)
+
+(defun sum_last_n(lst n)
+  (sum_last lst (+ 1 (- (length lst) n)))
+)
+\end{lstlisting}
+
+Дополняющая рекурсия, считающая сумму всех чисел от n-го аргумента до m-го с шагом d.
+\begin{lstlisting}
+(defun sum_range(lst n m d)
+  (let ((len (length lst)))
+    (cond
+      ((= m len)
+        (if (= 0 (rem (- n m) 3))
+          (car lst)
+          0
+        )
+      )
+      ((and (>= n len) (= 0 (rem (- n len) 3)))
+        (+ (car lst) (sum_range (cdr lst) n m d))
+      )
+      (t
+        (sum_range (cdr lst) n m d)
+      )
+    )
+  )
+)
+
+(defun sum_range_nmd(lst n m d)
+  (let ((len (length lst)))
+    (sum_range lst (+ 1 (- len n)) (+ 1 (- len m)) d)
+  )
+)
+\end{lstlisting}
+
+\section{Задание \No{}7}
+
+Написать рекурсивную функцию, которая возвращает последнее нечетное
+число из числового списка, возможно создавая некоторые вспомогательные функции.
+
+\begin{lstlisting}
+(defun last_odd_helper (lst lodd)
+  (cond ((null lst) lodd)
+        (t (last_odd_helper (cdr lst)
+                  (cond ((oddp (car lst)) (car lst))
+                        (t lodd))))
+  )
+)
+
+(defun last_odd (lst)
+    (last_odd_helper lst nil)
+)
+\end{lstlisting}
+
+\section{Задание \No{}8}
+
+Используя cons-дополняемую рекурсию с одним тестом завершения,
+написать функцию которая получает как аргумент список чисел, а возвращает список квадратов этих чисел в том же порядке.
+
+\begin{lstlisting}
+(defun square_helper (lst)
+    (cons (* (car lst) (car lst))
+            (if (> (length (cdr lst)) 0)
+                (square_helper (cdr lst))
+                nil
+            )
+    )
+)
+
+(defun square (lst)
+    (if (null lst)
+        nil
+        (square_helper lst)
+    )
+)
+\end{lstlisting}
+
+\section{Задание \No{}9}
+
+Написать функцию с именем select-odd, которая из заданного
+списка выбирает все нечетные числа.
+\begin{enumerate}
+    \item Вариант 1: select-even,
+    \item Вариант 2: вычисляет сумму всех нечетных чисел(sum-all-odd) или сумму всех четных чисел (sum-all-even) из заданного списка. )
+\end{enumerate}
+
+\begin{lstlisting}
+(defun filter (predicate lst)
+  (cond ((null lst) nil)
+        (t (cond ((funcall predicate (car lst))
+                  (cons (car lst) (filter predicate (cdr lst))))
+                 (t (filter predicate (cdr lst)))
+           )
+        )
+  )
+)
+
+(defun select_odd (nums)
+  (filter #'oddp nums)
+)
+
+(defun select_even (nums)
+  (filter #'evenp nums)
+)
+
+(defun sum_all_odd (nums)
+  (reduce #'+ (select_odd nums))
+)
+
+(defun sum_all_even (nums)
+  (reduce #'+ (select_even nums))
+)
+\end{lstlisting}
