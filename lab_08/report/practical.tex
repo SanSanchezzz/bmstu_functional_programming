@@ -1,0 +1,149 @@
+\chapter{Практическая часть}
+
+\section{Задание №1}
+
+Написать функцию, которая по своему списку-аргументу lst определяет является ли
+он полиндромом (то есть равны ли lst и (reverse lst)).
+
+\begin{lstlisting}
+(defun is_palindrom (lst)
+    (equal lst (reverse lst))
+)
+\end{lstlisting}
+
+\section{задание №2}
+
+Напишите функцию swap-first-last, которая переставляет в списке-аргументе
+первый и последний элементы.
+
+\begin{lstlisting}
+(defun swap-first-last (lst)
+    (cond
+        ((null lst) Nil)
+        ((eql (length lst) 1) lst)
+        (T
+            (append
+                (last lst)
+                (mapcar #'(lambda (el _) el) (cdr lst) (cddr lst))
+                (list (first lst))
+            )
+        )
+    )
+)
+\end{lstlisting}
+
+\begin{lstlisting}
+(swap-first-last ()) ;;; Nil
+(swap-first-last '(1)) ;;; (1)
+(swap-first-last '(1 2)) ;;; (2 1)
+(swap-first-last '(1 2 3 4 5)) ;;; (5 2 3 4 1)
+\end{lstlisting}
+
+\section{Задание №3}
+
+Напишите функцию swap-tow-elements, которая переставляет в списке-аргументе
+два указанных своими порядковыми номерами элемента в этом списке.
+
+\begin{lstlisting}
+(defun swap-two-elements (a b lst)
+    (cond
+        ((eql a b) lst)
+        ((> a b) (swap-two-elements b a lst))
+        (T
+            (append
+                (subseq lst 0 a)
+                (list (nth b lst))
+                (subseq lst (+ a 1) b)
+                (list (nth a lst))
+                (subseq lst (+ b 1))
+            )
+        )
+    )
+)
+\end{lstlisting}
+
+\begin{lstlisting}
+(swap-two-elements '2 '4 '(1 2 3 4 5)) ;;; (1 2 5 4 3)
+(swap-two-elements '1 '4 '(1 2 3 4 5)) ;;; (1 5 3 4 2)
+(swap-two-elements '3 '2 '(1 2 3 4 5)) ;;; (1 2 4 3 5)
+\end{lstlisting}
+\section{Задание №4}
+
+Напишите две функции, swap-to-left и swap-to-right, которые производят круговую
+перестановку в списке-аргументе влево и вправо, соотвественно (на k позиций).
+
+\begin{lstlisting}
+(defun swap-to-left-one (lst)
+    (append (mapcar #'(lambda (el _) el) (cdr lst) lst) (list (car lst)))
+)
+
+(defun swap-to-left (lst k)
+    (cond
+        ((<= k 0) lst)
+        (T (swap-to-left (swap-to-left-one lst) (- k 1)))
+    )
+)
+
+(defun swap-to-right-one (lst)
+    (append (last lst) (mapcar #'(lambda (el _) el) lst (cdr lst)))
+)
+
+(defun swap-to-right (lst k)
+    (cond
+        ((<= k 0) lst)
+        (T (swap-to-right (swap-to-right-one lst) (- k 1)))
+    )
+)
+\end{lstlisting}
+
+\begin{lstlisting}
+(swap-to-left '(1 2 3 4 5) 2) ;;; (3 4 5 1 2)
+(swap-to-left '(1 2 3 4 5) 5) ;;; (1 2 3 4 5)
+
+(swap-to-right '(1 2 3 4 5) 2) ;;; (4 5 1 2 3)
+(swap-to-right '(1 2 3 4 5) 5) ;;; (1 2 3 4 5)
+\end{lstlisting}
+
+\section{Задание №5}
+
+Напишите функцию, которая умножает на заданное число-аргумент
+все числа из заданного списка-аргумента, когда
+
+\begin{enumerate}
+    \item все элементы списка -- числа,
+    \item элементы списка -- любые объекты.
+\end{enumerate}
+
+На вход подается список и число.
+
+С помощью функционала mapcar, производится работа с каждым аргументом списка: проверяется на число (если необходимо), выполняется умножение на заданный аргумент.
+
+\begin{lstlisting}
+(defun multiplication_numbers (lst k)
+  (mapcar #'(lambda (x) (* x k)) lst)
+)
+
+(defun multiplication_all (lst k)
+  (mapcar #'(lambda (x) (if (numberp x) (* x k) x)) lst)
+)
+\end{lstlisting}
+\section{Задание №6}
+
+Напишите функцию, select-between, которая из списка-аргумента, содержащего
+только числа, выбирает только те, которые расположены между двумя указанными
+границами-аргументами и возращает их в виде списка (упорядоченного по
+возрастанию списка чисел).
+
+\begin{lstlisting}
+(defun found_between (a b lst)
+  (defun found (lst1 lst2)
+    (if (numberp lst1)
+      (append(if(and(< a lst1)(< lst1 b))(list lst1) Nil)
+              (if(and(< a lst2)(< lst2 b))(list lst2) Nil))
+      (append lst1
+              (if(and(< a lst2)(< lst2 b))(list lst2) Nil))
+    )
+  )
+  (reduce #'found lst)
+)
+\end{lstlisting}
